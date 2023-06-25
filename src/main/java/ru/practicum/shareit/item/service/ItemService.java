@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface ItemService {
-    ItemDto saveItem(Item item, Long userId);
+    ItemDto saveItem(Item item, long userId);
 
-    ItemDto getItemById(Long itemId, Long useId);
+    ItemDto getItemById(Long itemId, long useId);
 
-    ItemDto updateItem(Long userId, Long patchId, Map<String, Object> updates);
+    ItemDto updateItem(long userId, Long patchId, Map<String, Object> updates);
 
-    List<ItemDto> getAllUserItem(Long userId);
+    List<ItemDto> getAllUserItem(long userId);
 
-    List<ItemDto> searchItems(Long userId, String text);
+    List<ItemDto> searchItems(long userId, String text);
 }

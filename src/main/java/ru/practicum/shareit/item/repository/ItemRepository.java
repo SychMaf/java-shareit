@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface ItemRepository {
-    Item saveItem(Item item, Long userId);
+    Item saveItem(Item item, long userId);
 
-    List<Item> getAllUserItem(Long userId);
+    List<Item> getAllUserItem(long userId);
 
     Item getItemById(Long itemId);
 
