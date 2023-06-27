@@ -21,8 +21,9 @@ public class ItemServiceImpl implements ItemService {
     private final ItemFieldsValidator itemFieldsValidator;
 
     @Override
-    public ItemDto saveItem(Item item, long userId) {
+    public ItemDto saveItem(ItemDto itemDto, long userId) {
         fieldsValidator.checkUserDoesntExist(userId);
+        Item item = ItemDtoMapper.toItem(itemDto, userId);
         return ItemDtoMapper.toItemDto(itemRepository.saveItem(item, userId));
     }
 

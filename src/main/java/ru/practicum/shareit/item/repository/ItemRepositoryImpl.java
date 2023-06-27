@@ -17,7 +17,6 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item saveItem(Item item, long userId) {
-        item.setOwner(userId);
         item.setId(itemId);
         items.put(itemId, item);
         userItems.computeIfAbsent(userId, k -> new ArrayList<>()).add(item);

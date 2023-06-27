@@ -10,7 +10,19 @@ public class ItemDtoMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest() != null ? item.getRequest() : null
+                item.getRequest() != null ? item.getRequest() : null,
+                item.getOwner() != null ? item.getOwner() : null
+        );
+    }
+
+    public static Item toItem(ItemDto itemDto, Long userId) {
+        return new Item(
+                itemDto.getId(),
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                userId,
+                itemDto.getRequest() != null ? itemDto.getRequest() : null
         );
     }
 }
