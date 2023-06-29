@@ -21,28 +21,28 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto saveItem(ItemDto itemDto, long userId) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository ,userId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         Item item = ItemDtoMapper.toItem(itemDto, userId);
         return ItemDtoMapper.toItemDto(itemRepository.saveItem(item, userId));
     }
 
     @Override
     public ItemDto getItemById(Long itemId, long userId) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository ,userId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         return ItemDtoMapper.toItemDto(itemRepository.getItemById(itemId));
     }
 
     @Override
     public ItemDto updateItem(long userId, Long patchId, ItemDto itemDto) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository ,userId);
-        ItemFieldsValidator.checkItemToUser(itemRepository ,userId, patchId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
+        ItemFieldsValidator.checkItemToUser(itemRepository, userId, patchId);
         Item item = ItemDtoMapper.toItem(itemDto, userId);
         return ItemDtoMapper.toItemDto(itemRepository.upgradeItem(patchId, item));
     }
 
     @Override
     public List<ItemDto> getAllUserItem(long userId) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository ,userId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         return itemRepository.getAllUserItem(userId).stream()
                 .map(ItemDtoMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItems(long userId, String text) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository ,userId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         if (text.isEmpty()) {
             return List.of();
         }
