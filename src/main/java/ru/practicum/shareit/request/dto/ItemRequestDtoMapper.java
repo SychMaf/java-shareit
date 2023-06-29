@@ -1,7 +1,9 @@
 package ru.practicum.shareit.request.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.request.model.ItemRequest;
 
+@UtilityClass
 public class ItemRequestDtoMapper {
 
     public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {

@@ -11,7 +11,7 @@ public interface UserRepository {
 
     User saveUser(User user);
 
-    User updateUser(Long patchId, Map<String, Object> updates);
+    User updateUser(Long patchId, User user);
 
     void deleteUser(Long removeId);
 }

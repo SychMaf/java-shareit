@@ -9,14 +9,12 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserFieldsValidator userFieldsValidator;
 
     @Override
     public List<UserDto> getAllUsers() {
@@ -27,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        userFieldsValidator.checkUserDoesntExist(id);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, id);
         return UserDtoMapper.toUserDto(userRepository.getUserById(id));
     }
 
@@ -38,14 +36,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long patchId, Map<String, Object> updates) {
-        userFieldsValidator.checkUserDoesntExist(patchId);
-        return UserDtoMapper.toUserDto(userRepository.updateUser(patchId, updates));
+    public UserDto updateUser(Long patchId, UserDto userDto) {
+        UserFieldsValidator.checkUserDoesntExist(userRepository, patchId);
+        User user = UserDtoMapper.toUser(userDto);
+        return UserDtoMapper.toUserDto(userRepository.updateUser(patchId, user));
     }
 
     @Override
     public void deleteUser(Long removeId) {
-        userFieldsValidator.checkUserDoesntExist(removeId);
+        UserFieldsValidator.checkUserDoesntExist(userRepository, removeId);
         userRepository.deleteUser(removeId);
     }
 }

@@ -3,14 +3,13 @@ package ru.practicum.shareit.item.service;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ItemService {
     ItemDto saveItem(ItemDto itemDto, long userId);
 
     ItemDto getItemById(Long itemId, long useId);
 
-    ItemDto updateItem(long userId, Long patchId, Map<String, Object> updates);
+    ItemDto updateItem(long userId, Long patchId, ItemDto itemDto);
 
     List<ItemDto> getAllUserItem(long userId);
 

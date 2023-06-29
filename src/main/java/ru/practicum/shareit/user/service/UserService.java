@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
     List<UserDto> getAllUsers();
@@ -12,7 +11,7 @@ public interface UserService {
 
     UserDto saveUser(UserDto userDto);
 
-    UserDto updateUser(Long patchId, Map<String, Object> updates);
+    UserDto updateUser(Long patchId, UserDto userDto);
 
     void deleteUser(Long removeId);
 }

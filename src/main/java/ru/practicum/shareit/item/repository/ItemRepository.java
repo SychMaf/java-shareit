@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ItemRepository {
     Item saveItem(Item item, long userId);
@@ -12,7 +11,7 @@ public interface ItemRepository {
 
     Item getItemById(Long itemId);
 
-    Item upgradeItem(Long patchId, Map<String, Object> updates);
+    Item upgradeItem(Long patchId, Item item);
 
     List<Item> searchItem(String text);
 }

@@ -4,10 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
@@ -38,14 +35,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User updateUser(Long patchId, Map<String, Object> updates) {
+    public User updateUser(Long patchId, User updateUser) {
         User user = users.get(patchId);
-        for (String key : updates.keySet()) {
-            if (key.equalsIgnoreCase("name")) {
-                user.setName(updates.get(key).toString());
-            }
-            if (key.equalsIgnoreCase("email")) {
-                String email = updates.get(key).toString();
+        if (updateUser != null) {
+            if (updateUser.getEmail() != null) {
+                String email = updateUser.getEmail();
                 if (emails.contains(email) && !user.getEmail().equals(email)) {
                     throw new EmailException("Email already exist");
                 }
@@ -53,8 +47,11 @@ public class UserRepositoryImpl implements UserRepository {
                 user.setEmail(email);
                 emails.add(user.getEmail());
             }
+            if (updateUser.getName() != null) {
+                user.setName(updateUser.getName());
+            }
+            users.put(patchId, user);
         }
-        users.put(patchId, user);
         return users.get(patchId);
     }
 

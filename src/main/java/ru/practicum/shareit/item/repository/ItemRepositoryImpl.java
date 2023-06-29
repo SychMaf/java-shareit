@@ -35,18 +35,16 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item upgradeItem(Long patchId, Map<String, Object> updates) {
+    public Item upgradeItem(Long patchId, Item patchItem) {
         Item item = items.get(patchId);
-        for (String key : updates.keySet()) {
-            if (key.equalsIgnoreCase("name")) {
-                item.setName(updates.get(key).toString());
-            }
-            if (key.equalsIgnoreCase("description")) {
-                item.setDescription(updates.get(key).toString());
-            }
-            if (key.equalsIgnoreCase("available")) {
-                item.setAvailable((Boolean) updates.get(key));
-            }
+        if (patchItem.getName() != null) {
+            item.setName(patchItem.getName());
+        }
+        if (patchItem.getDescription() != null) {
+            item.setDescription(patchItem.getDescription());
+        }
+        if (patchItem.getAvailable() != null) {
+            item.setAvailable(patchItem.getAvailable());
         }
         items.put(patchId, item);
         return items.get(patchId);
@@ -55,9 +53,9 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> searchItem(String text) {
         return items.values().stream()
-                .filter(item -> ((item.getDescription().toLowerCase().contains(text.toLowerCase())
-                        || item.getName().toLowerCase().contains(text.toLowerCase()))
-                        && item.getAvailable()))
+                .filter(item -> (item.getAvailable() &&
+                        (item.getDescription().toLowerCase().contains(text.toLowerCase())
+                                || item.getName().toLowerCase().contains(text.toLowerCase()))))
                 .collect(Collectors.toList());
     }
 }
