@@ -1,12 +1,58 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validator.ValidationGroups;
 
-/**
- * TODO Sprint add-controllers.
- */
+import javax.validation.Valid;
+import java.util.List;
+
 @RestController
+@Validated
+@RequiredArgsConstructor
 @RequestMapping("/items")
+@Slf4j
 public class ItemController {
+    private final ItemService itemService;
+
+    @PostMapping
+    @Validated(ValidationGroups.Create.class)
+    public ItemDto addNewItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                              @Valid @RequestBody ItemDto itemDto) {
+        log.trace("Got request to add new item: {}", itemDto);
+        return itemService.saveItem(itemDto, userId);
+    }
+
+    @GetMapping
+    public List<ItemDto> getAllUserItem(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.trace("Got request to all user items: {}", userId);
+        return itemService.getAllUserItem(userId);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+                               @PathVariable Long itemId) {
+        log.trace("Got request to get item with id: {}", itemId);
+        return itemService.getItemById(itemId, userId);
+    }
+
+    @PatchMapping("/{itemId}")
+    @Validated(ValidationGroups.Update.class)
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                              @PathVariable Long itemId,
+                              @RequestBody @Valid ItemDto itemDto) {
+        log.trace("Got request to update item: {}", itemDto);
+        return itemService.updateItem(userId, itemId, itemDto);
+    }
+
+    @GetMapping("/search")
+    public List<ItemDto> searchItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                    @RequestParam String text) {
+        log.trace("Got request to search item by string query: {}", text);
+        return itemService.searchItems(userId, text);
+    }
 }
