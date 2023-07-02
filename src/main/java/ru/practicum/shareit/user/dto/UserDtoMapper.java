@@ -20,4 +20,12 @@ public class UserDtoMapper {
                 userDto.getName(),
                 userDto.getEmail());
     }
+
+    public User updateUser(UserDto userDto, User user) {
+        return new User(
+                user.getId(),
+                userDto.getName() != null ? userDto.getName() : user.getName(),
+                userDto.getEmail() != null ? userDto.getEmail() : user.getEmail()
+        );
+    }
 }
