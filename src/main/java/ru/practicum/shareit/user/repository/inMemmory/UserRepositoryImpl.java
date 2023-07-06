@@ -3,9 +3,11 @@ package ru.practicum.shareit.user.repository.inMemmory;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.inMemmory.UserRepository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {

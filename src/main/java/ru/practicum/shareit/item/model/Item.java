@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
@@ -22,7 +21,7 @@ public class Item {
     private String description;
     private Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner", referencedColumnName = "user_id" ,nullable = false)
+    @JoinColumn(name = "owner", referencedColumnName = "user_id", nullable = false)
     private User owner;
     private Long request;
 }

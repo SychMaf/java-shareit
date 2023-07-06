@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
-import ru.practicum.shareit.validator.UserFieldsValidator;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -48,20 +47,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto updateUser(Long patchId, UserDto userDto) {
-        UserFieldsValidator.checkUserDoesntExist(userRepository, patchId);
-        User updateUser = UserDtoMapper.toUser(userDto);
-        if (updateUser.getName() != null) {
-            userRepository.updateName(patchId, updateUser.getName());
+        User outdatedUser = userRepository.findById(patchId)
+                .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
+        User updateUser = UserDtoMapper.updateUser(userDto, outdatedUser);
+        try {
+            User patchUser = userRepository.save(updateUser);
+            return UserDtoMapper.toUserDto(patchUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new EmailException("Email already exist");
         }
-        if (updateUser.getEmail() != null) {
-            try {
-                userRepository.updateEmail(patchId, updateUser.getEmail());
-            } catch (DataIntegrityViolationException e) {
-                throw new EmailException("Email already exist");
-            }
-        }
-        return UserDtoMapper.toUserDto(userRepository.findById(patchId)
-                .orElseThrow(() -> new NotFoundException("User with id %d does not exist")));
     }
 
     @Override
