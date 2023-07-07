@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -18,7 +19,6 @@ import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
 import ru.practicum.shareit.validator.ItemFieldsValidator;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 
-import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -43,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDtoLong getItemById(Long itemId, Long userId) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         Item item = itemRepository.findById(itemId)
@@ -67,6 +68,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDtoLong> getAllUserItem(long userId) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         return itemRepository.findByOwner_Id(userId).stream()
@@ -77,6 +79,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> searchItems(long userId, String text) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         if (text.isEmpty()) {
@@ -88,6 +91,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto writeCommentToItem(long userId, Long itemId, CommentDto commentDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item with id %d does not exist"));

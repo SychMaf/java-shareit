@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -10,7 +11,6 @@ import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserDBRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserDtoMapper::toUserDto)
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
