@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.repository;
+package ru.practicum.shareit.item.repository.inMemmory;
 
 import ru.practicum.shareit.item.model.Item;
 
