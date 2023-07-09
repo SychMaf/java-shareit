@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -20,7 +22,6 @@ import ru.practicum.shareit.validator.ItemFieldsValidator;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,29 +80,30 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getUserBookingList(Long userId, String state) {
+    public List<BookingDto> getUserBookingList(Long userId, String state, Integer from, Integer size) {
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
         List<Booking> result = List.of();
         LocalDateTime currentTime = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
         try {
             GetState groupGetState = GetState.valueOf(state.toUpperCase());
             switch (groupGetState) {
                 case PAST:
-                    result = bookingRepository.findByBooker_IdAndEndIsBeforeOrderByStartDesc(userId, currentTime);
+                    result = bookingRepository.findAllByBooker_IdAndEndIsBeforeOrderByStartDesc(userId, currentTime, pageable);
                     break;
                 case CURRENT:
-                    result = bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartAsc(userId, currentTime, currentTime);
+                    result = bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartAsc(userId, currentTime, currentTime, pageable);
                     break;
                 case FUTURE:
-                    result = bookingRepository.findAllByBookerAndStartIsAfterOrderByStartDesc(booker, currentTime);
+                    result = bookingRepository.findAllByBookerAndStartIsAfterOrderByStartDesc(booker, currentTime, pageable);
                     break;
                 case WAITING:
                 case REJECTED:
-                    result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state.toUpperCase()));
+                    result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state.toUpperCase()), pageable);
                     break;
                 case ALL:
-                    result = bookingRepository.findAllByBookerOrderByStartDesc(booker);
+                    result = bookingRepository.findAllByBookerOrderByStartDesc(booker, pageable);
             }
         } catch (IllegalArgumentException e) {
             throw new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS");
@@ -113,36 +115,36 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getUserItemsBooking(Long userId, String state) {
+    public List<BookingDto> getUserItemsBooking(Long userId, String state, Integer from, Integer size) {
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
         List<Booking> result = List.of();
         LocalDateTime currentTime = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
         try {
             GetState groupGetState = GetState.valueOf(state.toUpperCase());
             switch (groupGetState) {
                 case PAST:
-                    result = bookingRepository.findByItem_Owner_IdAndEndIsBefore(userId, currentTime);
+                    result = bookingRepository.findAllByItem_Owner_IdAndEndIsBeforeOrderByStartDesc(userId, currentTime, pageable);
                     break;
                 case CURRENT:
-                    result = bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(userId, currentTime, currentTime);
+                    result = bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfterOrderByStartDesc(userId, currentTime, currentTime, pageable);
                     break;
                 case FUTURE:
-                    result = bookingRepository.findAllByItem_OwnerAndStartIsAfter(booker, currentTime);
+                    result = bookingRepository.findAllByItem_OwnerAndStartIsAfterOrderByStartDesc(booker, currentTime, pageable);
                     break;
                 case WAITING:
                 case REJECTED:
-                    result = bookingRepository.findAllByItem_OwnerAndStatus(booker, BookingStatus.valueOf(state.toUpperCase()));
+                    result = bookingRepository.findAllByItem_OwnerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state.toUpperCase()), pageable);
                     break;
                 case ALL:
-                    result = bookingRepository.findAllByItem_Owner(booker);
+                    result = bookingRepository.findAllByItem_OwnerOrderByStartDesc(booker, pageable);
             }
         } catch (IllegalArgumentException e) {
             throw new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS");
         }
         return result.stream()
                 .map(BookingDtoMapper::toBookingDto)
-                .sorted(Comparator.comparing(BookingDto::getStart).reversed())
                 .collect(Collectors.toList());
     }
 }

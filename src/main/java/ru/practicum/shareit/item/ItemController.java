@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validator.ValidationGroups;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -29,15 +31,17 @@ public class ItemController {
         return itemService.saveItem(itemDto, userId);
     }
 
-    @GetMapping
-    public List<ItemDtoLong> getAllUserItem(@RequestHeader("X-Sharer-User-Id") long userId) {
+    @GetMapping()
+    public List<ItemDtoLong> getAllUserItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
+                                            @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         log.trace("Got request to all user items: {}", userId);
-        return itemService.getAllUserItem(userId);
+        return itemService.getAllUserItem(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
     public ItemDtoLong getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
-                               @PathVariable Long itemId) {
+                                   @PathVariable Long itemId) {
         log.trace("Got request to get item with id: {}", itemId);
         return itemService.getItemById(itemId, userId);
     }
@@ -53,9 +57,11 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                    @RequestParam String text) {
+                                    @RequestParam String text,
+                                    @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
+                                    @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         log.trace("Got request to search item by string query: {}", text);
-        return itemService.searchItems(userId, text);
+        return itemService.searchItems(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
