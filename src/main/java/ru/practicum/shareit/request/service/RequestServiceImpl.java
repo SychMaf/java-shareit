@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.repository.inDB.ItemDBRepository;
-import ru.practicum.shareit.request.Repository.ItemRequestDBRepository;
+import ru.practicum.shareit.request.repository.ItemRequestDBRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
