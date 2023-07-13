@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.repository.ItemDBRepository;
 import ru.practicum.shareit.request.repository.ItemRequestDBRepository;
@@ -27,6 +28,7 @@ public class RequestServiceImpl implements RequestService {
     private final UserDBRepository userRepository;
 
     @Override
+    @Transactional
     public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
@@ -36,6 +38,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getUserResponse(Long userId) {
         User requester = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
@@ -47,6 +50,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllNotUser(Long userId, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id %d does not exist"));
@@ -59,6 +63,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestDto getByRequestId(Long userId, Long requestId) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         ItemRequest itemRequest = requestRepository.findById(requestId)
