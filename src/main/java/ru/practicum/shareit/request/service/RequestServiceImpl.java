@@ -5,13 +5,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.repository.inDB.ItemDBRepository;
+import ru.practicum.shareit.item.repository.ItemDBRepository;
 import ru.practicum.shareit.request.repository.ItemRequestDBRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
+import ru.practicum.shareit.user.repository.UserDBRepository;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@ import ru.practicum.shareit.exception.ItemNotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.PermissionException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.inDB.ItemDBRepository;
+import ru.practicum.shareit.item.repository.ItemDBRepository;
 
 @UtilityClass
 public class ItemFieldsValidator {

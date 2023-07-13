@@ -14,10 +14,10 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.inDB.CommentDBRepository;
-import ru.practicum.shareit.item.repository.inDB.ItemDBRepository;
+import ru.practicum.shareit.item.repository.CommentDBRepository;
+import ru.practicum.shareit.item.repository.ItemDBRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
+import ru.practicum.shareit.user.repository.UserDBRepository;
 import ru.practicum.shareit.validator.ItemFieldsValidator;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 

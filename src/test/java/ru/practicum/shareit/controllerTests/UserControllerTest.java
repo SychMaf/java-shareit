@@ -8,10 +8,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exception.EmailException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.ValidationException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
     private UserDto userDto;
+    private UserDto badEmail;
 
     @BeforeEach
     void setUp() {
@@ -41,6 +45,12 @@ public class UserControllerTest {
                 1L,
                 "John",
                 "user@user.com"
+        );
+
+        badEmail = new UserDto(
+                1L,
+                "John",
+                "badEmail"
         );
     }
 
@@ -58,6 +68,32 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName())))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+    }
+
+    @Test
+    void saveNewButEmailAlreadyUsedTest() throws Exception {
+        when(userService.saveUser(any(UserDto.class)))
+                .thenThrow(new EmailException("Email already exist"));
+
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void saveNewButEmailNotCorrectTest() throws Exception {
+        when(userService.saveUser(any(UserDto.class)))
+                .thenThrow(new ValidationException());
+
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(badEmail))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -82,6 +118,15 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName())))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+    }
+
+    @Test
+    void getUserWhenHisNotExistTest() throws Exception {
+        when(userService.getUserById(anyLong()))
+                .thenThrow(new NotFoundException("User with id %d does not exist"));
+
+        mvc.perform(get("/users/{id}", 999L))
+                .andExpect(status().isNotFound());
     }
 
     @Test

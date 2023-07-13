@@ -13,6 +13,9 @@ import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.BookingTimeException;
+import ru.practicum.shareit.exception.ItemNotAvailableException;
+import ru.practicum.shareit.exception.UnsupportedStateException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -91,6 +94,34 @@ public class BookingControllerTest {
     }
 
     @Test
+    void addNewBookingWhenItemNotAvailableTest() throws Exception {
+        when(bookingService.createBooking(any(BookingDto.class), anyLong()))
+                .thenThrow(new ItemNotAvailableException("Item with id %d does not have permission for booking"));
+
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addNewBookingWhenTimeBookingIncorrectTest() throws Exception {
+        when(bookingService.createBooking(any(BookingDto.class), anyLong()))
+                .thenThrow(new BookingTimeException("Unexpected time values of booking"));
+
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void updateItemTest() throws Exception {
         when(bookingService.changeBookingStatus(anyLong(), anyLong(), anyString()))
                 .thenReturn(bookingDto);
@@ -143,6 +174,16 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$[0].bookerId", is(bookingDto.getBookerId()), Long.class))
                 .andExpect(jsonPath("$[0].booker", is(bookingDto.getBooker()), UserDto.class))
                 .andExpect(jsonPath("$[0].item", is(bookingDto.getItem()), ItemDto.class));
+    }
+
+    @Test
+    void getUserBookingListButIncorrectStateParameterTest() throws Exception {
+        when(bookingService.getUserBookingList(anyLong(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS"));
+
+        mvc.perform(get("/bookings", 1L)
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

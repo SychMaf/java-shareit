@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.validator.ValidationGroups;
@@ -13,7 +12,6 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 public class ItemDtoLong {
     @PositiveOrZero(groups = ValidationGroups.Update.class)

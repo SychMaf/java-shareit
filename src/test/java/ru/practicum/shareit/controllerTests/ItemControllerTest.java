@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exception.PermissionException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -138,6 +139,34 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.description", is(itemDto.getDescription())))
                 .andExpect(jsonPath("$.available", is(itemDto.getAvailable())))
                 .andExpect(jsonPath("$.requestId", is(itemDto.getRequestId()), Long.class));
+    }
+
+    @Test
+    void updateItemWhenUserDontHavePermissionTest() throws Exception {
+        when(itemService.updateItem(anyLong(), anyLong(), any(ItemDto.class)))
+                .thenThrow(new PermissionException("User with id %d does not have permission for do this"));
+
+        mvc.perform(patch("/items/{itemId}", 3L)
+                        .content(mapper.writeValueAsString(itemDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateItemWhenThrowUnexpectedExceptionTest() throws Exception {
+        when(itemService.updateItem(anyLong(), anyLong(), any(ItemDto.class)))
+                .thenThrow(new RuntimeException("smf strange"));
+
+        mvc.perform(patch("/items/{itemId}", 3L)
+                        .content(mapper.writeValueAsString(itemDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
