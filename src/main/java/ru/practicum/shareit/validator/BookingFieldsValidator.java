@@ -41,7 +41,7 @@ public class BookingFieldsValidator {
     }
 
     public void checkOwnerToBooking(Item item, Long ownerId) {
-        if (item.getId().equals(ownerId)) {
+        if (item.getOwner().getId().equals(ownerId)) {
             throw new PermissionException("owner cant create booking for his item");
         }
     }

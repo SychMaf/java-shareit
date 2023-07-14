@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -12,10 +14,10 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.inDB.CommentDBRepository;
-import ru.practicum.shareit.item.repository.inDB.ItemDBRepository;
+import ru.practicum.shareit.item.repository.CommentDBRepository;
+import ru.practicum.shareit.item.repository.ItemDBRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
+import ru.practicum.shareit.user.repository.UserDBRepository;
 import ru.practicum.shareit.validator.ItemFieldsValidator;
 import ru.practicum.shareit.validator.UserFieldsValidator;
 
@@ -69,9 +71,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDtoLong> getAllUserItem(long userId) {
+        public List<ItemDtoLong> getAllUserItem(long userId, Integer from, Integer size) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
-        return itemRepository.findByOwner_Id(userId).stream()
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemRepository.findByOwner_Id(userId, pageable).stream()
                 .map(item -> ItemDtoMapper.toItemDtoLong(item, commentRepository.findAllByItem(item)))
                 .map(this::fillOrderBooking)
                 .sorted(Comparator.comparing(ItemDtoLong::getId))
@@ -80,12 +83,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> searchItems(long userId, String text) {
+    public List<ItemDto> searchItems(long userId, String text, Integer from, Integer size) {
         UserFieldsValidator.checkUserDoesntExist(userRepository, userId);
         if (text.isEmpty()) {
             return List.of();
         }
-        return itemRepository.search(text).stream()
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemRepository.search(text, pageable).stream()
                 .map(ItemDtoMapper::toItemDto)
                 .collect(Collectors.toList());
     }

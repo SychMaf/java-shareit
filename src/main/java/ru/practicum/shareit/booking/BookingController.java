@@ -8,6 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -43,15 +45,19 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getUserBookingList(@RequestHeader("X-Sharer-User-Id") long userId,
-                                               @RequestParam(defaultValue = "ALL") String state) {
+                                               @RequestParam(defaultValue = "ALL") String state,
+                                               @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
+                                               @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         log.trace("Got request to get list user booking by id: {}", userId);
-        return bookingService.getUserBookingList(userId, state);
+        return bookingService.getUserBookingList(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getUserItemsBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                @RequestParam(defaultValue = "ALL") String state) {
+                                                @RequestParam(defaultValue = "ALL") String state,
+                                                @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
+                                                @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         log.trace("Got request to get list user items status by id: {}", userId);
-        return bookingService.getUserItemsBooking(userId, state);
+        return bookingService.getUserItemsBooking(userId, state, from, size);
     }
 }

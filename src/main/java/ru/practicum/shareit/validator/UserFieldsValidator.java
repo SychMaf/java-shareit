@@ -2,7 +2,7 @@ package ru.practicum.shareit.validator;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.repository.inDB.UserDBRepository;
+import ru.practicum.shareit.user.repository.UserDBRepository;
 
 @UtilityClass
 public class UserFieldsValidator {

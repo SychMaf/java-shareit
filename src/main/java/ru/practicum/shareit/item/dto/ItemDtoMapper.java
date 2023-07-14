@@ -43,7 +43,7 @@ public class ItemDtoMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 user,
-                itemDto.getRequest()
+                itemDto.getRequestId()
         );
     }
 
@@ -54,7 +54,7 @@ public class ItemDtoMapper {
                 itemDto.getDescription() != null ? itemDto.getDescription() : item.getDescription(),
                 itemDto.getAvailable() != null ? itemDto.getAvailable() : item.getAvailable(),
                 item.getOwner(),
-                itemDto.getRequest()
+                itemDto.getRequestId()
         );
     }
 }
