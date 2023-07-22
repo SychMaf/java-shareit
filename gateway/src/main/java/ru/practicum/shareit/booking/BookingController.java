@@ -28,21 +28,21 @@ public class BookingController {
                                               @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
+        log.info("GATEWAY: booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getBookings(userId, state, from, size);
     }
 
     @PostMapping
     public ResponseEntity<Object> addNewBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                            @RequestBody @Valid BookItemRequestDto requestDto) {
-        log.info("Creating booking {}, userId={}", requestDto, userId);
+        log.info("GATEWAY: Creating booking {}, userId={}", requestDto, userId);
         return bookingClient.bookItem(userId, requestDto);
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBookingInfoById(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @PathVariable Long bookingId) {
-        log.info("Get booking {}, userId={}", bookingId, userId);
+        log.info("GATEWAY: Get booking {}, userId={}", bookingId, userId);
         return bookingClient.getBooking(userId, bookingId);
     }
 
@@ -53,7 +53,7 @@ public class BookingController {
                                                 @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.trace("Got request to get list user items status by id: {}", userId);
+        log.trace("GATEWAY: request to get list user items status by id: {}", userId);
         return bookingClient.getUserItemsBooking(userId, state, from, size);
     }
 
@@ -61,7 +61,7 @@ public class BookingController {
     public ResponseEntity<Object> changeBookingStatus(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @PathVariable Long bookingId,
                                           @RequestParam Boolean approved) {
-        log.trace("Got request to change booking status: {}", approved);
+        log.trace("GATEWAY: request to change booking status: {}", approved);
         return bookingClient.changeBookingStatus(userId, bookingId, approved);
     }
 }

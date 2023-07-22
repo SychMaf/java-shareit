@@ -25,7 +25,7 @@ public class ItemController {
     @Validated(ValidationGroups.Create.class)
     public ResponseEntity<Object> addNewItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @Valid @RequestBody ItemDto itemDto) {
-        log.trace("Got request to add new item: {}", itemDto);
+        log.trace("GATEWAY: request to add new item: {}", itemDto);
         return itemClient.saveItem(itemDto, userId);
     }
 
@@ -33,14 +33,14 @@ public class ItemController {
     public ResponseEntity<Object> getAllUserItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                                  @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
                                                  @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
-        log.trace("Got request to all user items: {}", userId);
+        log.trace("GATEWAY: request to all user items: {}", userId);
         return itemClient.getAllUserItem(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
                                               @PathVariable Long itemId) {
-        log.trace("Got request to get item with id: {}", itemId);
+        log.trace("GATEWAY: request to get item with id: {}", itemId);
         return itemClient.getItemById(itemId, userId);
     }
 
@@ -49,7 +49,7 @@ public class ItemController {
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @PathVariable Long itemId,
                                              @RequestBody @Valid ItemDto itemDto) {
-        log.trace("Got request to update item: {}", itemDto);
+        log.trace("GATEWAY: request to update item: {}", itemDto);
         return itemClient.updateItem(userId, itemId, itemDto);
     }
 
@@ -58,7 +58,7 @@ public class ItemController {
                                              @RequestParam String text,
                                              @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
                                              @RequestParam(required = false, defaultValue = "10") @Positive Integer size) {
-        log.trace("Got request to search item by string query: {}", text);
+        log.trace("GATEWAY: request to search item by string query: {}", text);
         return itemClient.searchItems(userId, text, from, size);
     }
 
@@ -66,7 +66,7 @@ public class ItemController {
     public ResponseEntity<Object> writeCommentToItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                                      @PathVariable Long itemId,
                                                      @RequestBody @Valid CommentDto commentDto) {
-        log.trace("Got request to write comment to item: {}", userId);
+        log.trace("GATEWAY: request to write comment to item: {}", userId);
         return itemClient.writeCommentToItem(userId, itemId, commentDto);
     }
 }
