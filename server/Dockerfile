@@ -1,3 +1,6 @@
 FROM amazoncorretto:11
-COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+LABEL maintainer="erohazakurdaev@yandex.ru"
+VOLUME /tmp
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar"]
